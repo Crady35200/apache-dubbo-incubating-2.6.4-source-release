@@ -106,9 +106,11 @@ public class ExtensionLoader<T> {
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         if (type == null)
             throw new IllegalArgumentException("Extension type == null");
+        //扩展点类型只能是接口类型的
         if (!type.isInterface()) {
             throw new IllegalArgumentException("Extension type(" + type + ") is not interface!");
         }
+        //只有注解了@SPI的才会解析
         if (!withExtensionAnnotation(type)) {
             throw new IllegalArgumentException("Extension type(" + type +
                     ") is not extension, because WITHOUT @" + SPI.class.getSimpleName() + " Annotation!");
@@ -503,9 +505,10 @@ public class ExtensionLoader<T> {
                 EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
             }
-            //以来注入
+            //依赖注入(实现依赖注入)
             injectExtension(instance);
             Set<Class<?>> wrapperClasses = cachedWrapperClasses;
+            //实现AOP
             if (wrapperClasses != null && !wrapperClasses.isEmpty()) {
                 // 循环创建 Wrapper 实例
                 for (Class<?> wrapperClass : wrapperClasses) {
@@ -567,6 +570,10 @@ public class ExtensionLoader<T> {
 
     private Map<String, Class<?>> getExtensionClasses() {
         // 从缓存中获取已加载的拓展类
+        //从缓存中获取，cachedClasses也是一个Holder，Holder这里持有的是一个Map，
+        //key是扩展点实现名，value是扩展点实现类
+        //这里会存放当前扩展点类型的所有的扩展点的实现类,这里以Protocol为例，就是会存放Protocol的所有实现类
+        //比如key为dubbo，value为com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol
         Map<String, Class<?>> classes = cachedClasses.get();
         // 双重检查
         if (classes == null) {
@@ -585,6 +592,7 @@ public class ExtensionLoader<T> {
     // synchronized in getExtensionClasses
     private Map<String, Class<?>> loadExtensionClasses() {
         // 获取 SPI 注解，这里的 type 变量是在调用 getExtensionLoader 方法时传入的
+        //当前Extension的默认实现名字,比如说Protocol接口，注解是@SPI("dubbo")
         final SPI defaultAnnotation = type.getAnnotation(SPI.class);
         if (defaultAnnotation != null) {
             String value = defaultAnnotation.value();
@@ -761,7 +769,7 @@ public class ExtensionLoader<T> {
     @SuppressWarnings("unchecked")
     private T createAdaptiveExtension() {
         try {
-            // 获取自适应拓展类，并通过反射实例化
+            // 获取自适应拓展类，并通过反射实例化后最后进行依赖注入
             return injectExtension((T) getAdaptiveExtensionClass().newInstance());
         } catch (Exception e) {
             throw new IllegalStateException("Can not create adaptive extension " + type + ", cause: " + e.getMessage(), e);
@@ -769,13 +777,21 @@ public class ExtensionLoader<T> {
     }
 
     private Class<?> getAdaptiveExtensionClass() {
-        // 通过 SPI 获取所有的拓展类
+        // 通过 SPI 获取所有的拓展类，如果有@Adaptive类型的实现类，会赋值给cachedAdaptiveClass
+        //目前只有AdaptiveExtensionFactory和AdaptiveCompiler两个实现类是被注解了@Adaptive
+        //除了ExtensionFactory和Compiler类型的扩展之外，其他类型的扩展都是下面动态创建的的实现
         getExtensionClasses();
         // 检查缓存，若缓存不为空，则直接返回缓存
+        //加载完所有的实现之后，发现有cachedAdaptiveClass不为空
+        //也就是说当前获取的自适应实现类是AdaptiveExtensionFactory或者是AdaptiveCompiler，
+        //就直接返回，这两个类是特殊用处的，不用代码生成，而是现成的代码
         if (cachedAdaptiveClass != null) {
             return cachedAdaptiveClass;
         }
-        // 创建自适应拓展类
+        //动态创建自适应拓展类
+        //没有找到Adaptive类型的实现，动态创建一个
+        //比如Protocol的实现类，没有任何一个实现是用@Adaptive来注解的，只有Protocol接口的方法是有注解的
+        //这时候就需要来动态的生成了，也就是生成Protocol$Adaptive
         return cachedAdaptiveClass = createAdaptiveExtensionClass();
     }
 
