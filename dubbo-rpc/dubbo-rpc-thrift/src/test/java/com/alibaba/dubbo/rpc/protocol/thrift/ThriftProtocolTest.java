@@ -13,7 +13,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package com.alibaba.dubbo.rpc.protocol.thrift;
 
 import com.alibaba.dubbo.common.URL;
@@ -61,11 +62,14 @@ public class ThriftProtocolTest extends AbstractTest {
         }
 
     }
+*/
 /*
     @Test
     public void testRefer() throws Exception {
         // FIXME
-        *//*invoker = protocol.refer( Demo.class, url );
+        *//*
+*/
+/*invoker = protocol.refer( Demo.class, url );
 
         Assert.assertNotNull( invoker );
 
@@ -82,7 +86,11 @@ public class ThriftProtocolTest extends AbstractTest {
         Result result = invoker.invoke( invocation );
 
         Assert.assertEquals( arg, result.getResult() );*//*
+*/
+/*
 
-    }*/
+    }*//*
+
 
 }
+*/

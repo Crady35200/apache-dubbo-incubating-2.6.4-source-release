@@ -69,7 +69,7 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
             interfaces[len] = GenericService.class;
         }
 
-        // 调用重载方法
+        // 调用重载方法，调用JavassistProxyFactory的getProxy方法
         return getProxy(invoker, interfaces);
     }
 

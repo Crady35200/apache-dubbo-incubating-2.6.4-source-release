@@ -13,7 +13,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package com.alibaba.dubbo.rpc.protocol.thrift;
 
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
@@ -87,3 +88,4 @@ public class ThriftUtilsTest {
     }
 
 }
+*/

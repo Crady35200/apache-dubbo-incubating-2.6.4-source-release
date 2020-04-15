@@ -13,7 +13,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package com.alibaba.dubbo.rpc.protocol.thrift;
 
 import com.alibaba.dubbo.common.URL;
@@ -118,7 +119,8 @@ public class ServiceMethodNotFoundTest extends AbstractTest {
     @Test
     public void testServiceMethodNotFound() throws Exception {
         // FIXME
-        /*url = url.addParameter( "echoString." + Constants.TIMEOUT_KEY, Integer.MAX_VALUE );
+        */
+/*url = url.addParameter( "echoString." + Constants.TIMEOUT_KEY, Integer.MAX_VALUE );
 
         invoker = protocol.refer( Demo.class, url );
 
@@ -140,8 +142,10 @@ public class ServiceMethodNotFoundTest extends AbstractTest {
 
         Assert.assertNull( result.getResult() );
 
-        Assert.assertTrue( result.getException() instanceof RpcException );*/
+        Assert.assertTrue( result.getException() instanceof RpcException );*//*
+
 
     }
 
 }
+*/
